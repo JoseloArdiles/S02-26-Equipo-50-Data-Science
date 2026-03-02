@@ -119,7 +119,7 @@ export default function Register() {
         </CardHeader>
 
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 text-left">
           {error && (
             <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm text-center border border-red-200">
               {error}
