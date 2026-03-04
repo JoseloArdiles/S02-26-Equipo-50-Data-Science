@@ -21,7 +21,7 @@ class PrismaProductRepository extends IProductRepository {
     return await prisma.product.findUnique({
       where: { id },
       include: {
-        inventory: true,
+        variants: true,
       },
     });
   }
@@ -32,8 +32,9 @@ class PrismaProductRepository extends IProductRepository {
    * @returns {Promise<Object|null>} Producto encontrado o null
    */
   async findBySku(sku) {
-    return await prisma.product.findUnique({
+    return await prisma.productVariant.findUnique({
       where: { sku },
+      include : { productId: true, sku: true }
     });
   }
 
@@ -44,7 +45,19 @@ class PrismaProductRepository extends IProductRepository {
    */
   async create(productData) {
     return await prisma.product.create({
-      data: productData,
+      data: {
+        name: productData.name,
+        description: productData.description,
+        category: productData.category,
+        gender: productData.gender,
+        style: productData.style,
+        active: productData.active,
+        
+        variants: {
+          create: productData.variants 
+        }
+      },
+      include: { variants: true }
     });
   }
 
@@ -79,7 +92,7 @@ class PrismaProductRepository extends IProductRepository {
   async findAll() {
     return await prisma.product.findMany({
       include: {
-        inventory: true,
+        variants: true,
       },
     });
   }

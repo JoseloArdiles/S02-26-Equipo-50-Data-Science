@@ -16,27 +16,27 @@ class ProductService {
    * @param {Object} productData
    * @returns {Promise<Object>}
    */
-  async createProduct(productData) {
-    if (!productData.name || !productData.sku) {
-      throw new ValidationError('Nombre y SKU son requeridos');
-    }
+  async createProduct(rawData) {
+    const dto = new CreateProductDTO(rawData);
+    const productData = dto.getData();
 
-    if (productData.price === undefined || productData.price <= 0) {
-      throw new ValidationError('El precio debe ser mayor a 0');
-    }
-
-    const existingProduct = await this.productRepository.findBySku(productData.sku);
-    if (existingProduct) {
-      throw new ValidationError('El SKU ya esta en uso');
+    for (const variant of productData.variants) {
+      const existing = await this.productRepository.findBySku(variant.sku);
+      if (existing) {
+        throw new ValidationError(`El SKU ${variant.sku} ya está en uso`);
+      }
     }
 
     const product = await this.productRepository.create(productData);
 
-    await this.inventoryRepository.create({
-      productId: product.id,
-      quantity: productData.initialStock || 0,
-      minStock: productData.minStock || null,
-    });
+    if (this.inventoryRepository) {
+      for (const variant of product.variants) {
+        await this.inventoryRepository.create({
+          variantId: variant.id,
+          quantity: variant.stock || 0
+        });
+      }
+    }
 
     return product;
   }
@@ -77,16 +77,23 @@ class ProductService {
    * @param {Object} productData
    * @returns {Promise<Object>}
    */
-  async updateProduct(id, productData) {
-    const existingProduct = await this.productRepository.findById(id);
-    if (!existingProduct) {
-      throw new NotFoundError('Producto no encontrado');
-    }
+  async updateProduct(id, rawData) {
 
-    if (productData.sku && productData.sku !== existingProduct.sku) {
-      const skuInUse = await this.productRepository.findBySku(productData.sku);
-      if (skuInUse) {
-        throw new ValidationError('El SKU ya esta en uso');
+    const dto = new UpdateProductDTO(rawData);
+    const productData = dto.getValues();
+
+    const existingProduct = await this.productRepository.findById(id);
+    if (!existingProduct) throw new NotFoundError('Producto no encontrado');
+
+    if (productData.variants) {
+      for (const variant of productData.variants) {
+        if (variant.sku) {
+          const skuOwner = await this.productRepository.findBySku(variant.sku);
+          
+          if (skuOwner && skuOwner.productId !== id) {
+            throw new ValidationError(`El SKU ${variant.sku} pertenece a otro producto`);
+          }
+        }
       }
     }
 
