@@ -10,7 +10,7 @@ export const Dialog = ({ open, onOpenChange, children }) => {
     <DialogContext.Provider value={{ open, onOpenChange }}>
       {children}
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => onOpenChange(false)} />
+        <div className="fixed inset-0 z-40 bg-black/50" onClick={() => onOpenChange(false)} />
       )}
     </DialogContext.Provider>
   );
@@ -64,7 +64,7 @@ export const DialogContent = React.forwardRef(({ className, children, ...props }
 DialogContent.displayName = 'DialogContent';
 
 export const DialogHeader = ({ className, ...props }) => (
-  <div className={cn('flex flex-col space-y-1.5 text-center sm:text-left mb-4', className)} {...props} />
+  <div className={cn('flex flex-col space-y-1.5 text-left mb-4', className)} {...props} />
 );
 
 export const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (

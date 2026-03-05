@@ -15,8 +15,30 @@ class ProductController {
    */
   async create(req, res, next) {
     try {
-    
-      const product = await this.productService.createProduct(req.body);
+      const { name, sku, price, category, initialStock, minStock, color, size } = req.body;
+
+      if (!name || !sku) {
+        return res.status(400).json({
+          success: false,
+          error: 'Nombre y SKU son requeridos',
+        });
+      }
+
+      // Concatenar color y talla al nombre para no generar cambios en DB
+      let finalName = name;
+      if (color || size) {
+        const details = [color, size].filter(Boolean).join(', ');
+        finalName = `${name} (${details})`;
+      }
+
+      const product = await this.productService.createProduct({
+        name: finalName,
+        sku,
+        price: parseFloat(price),
+        category,
+        initialStock: initialStock ? parseInt(initialStock) : 0,
+        minStock: minStock ? parseInt(minStock) : null,
+      });
 
       return res.status(201).json({
         success: true,
@@ -39,9 +61,13 @@ class ProductController {
   async getAll(req, res, next) {
     try {
       const { category } = req.query;
-      const products = category 
-        ? await this.productService.getProductsByCategory(category)
-        : await this.productService.getAllProducts();
+
+      let products;
+      if (category) {
+        products = await this.productService.getProductsByCategory(category);
+      } else {
+        products = await this.productService.getAllProducts();
+      }
 
       return res.status(200).json({ success: true, data: products });
     } catch (error) { next(error); }
@@ -85,6 +111,14 @@ class ProductController {
   async update(req, res, next) {
     try {
       const { id } = req.params;
+      const { name, sku, price, category, active } = req.body;
+
+      const updateData = {};
+      if (name) updateData.name = name;
+      if (sku) updateData.sku = sku;
+      if (price) updateData.price = parseFloat(price);
+      if (category) updateData.category = category;
+      if (active !== undefined) updateData.active = active;
 
       const product = await this.productService.updateProduct(id, req.body);
 

@@ -14,6 +14,16 @@
 
 DATAMARK es una plataforma integral para la gestion de pequenos comercios de ropa y calzado. Permite gestionar productos, ventas, clientes e inventario desde una interfaz intuitiva.
 
+### Arquitectura del Sistema
+
+DATAMARK esta compuesto por:
+
+- **Frontend SPA**: Aplicacion React desplegada en Vercel
+- **Backend REST API**: Servidor Node/Express desplegado en Railway
+- **Base de datos**: PostgreSQL alojada en Neon (serverless)
+
+Esta arquitectura permite escalabilidad independiente de cada componente y costos optimizados segun el uso.
+
 ### Caracteristicas Principales
 
 - Gestion de productos con codigo SKU
@@ -62,101 +72,122 @@ Despues del registro, se iniciara el proceso de configuracion:
 
 Permite gestionar el catalogo de productos.
 
+**Estado actual:**
+- Backend: Implementado
+- Frontend: Implementado
+
+#### Acceso desde la interfaz
+
+1. Navega a **Productos** en el menu lateral
+2. Puedes:
+   - Ver todos los productos en lista o tabla
+   - Buscar por nombre o SKU
+   - Filtrar por categoria (ROPA/CALZADO)
+   - Agregar nuevo producto
+   - Editar producto existente
+   - Eliminar producto
+
 #### Crear Producto
 
-1. Navega a la seccion "Productos"
-2. Haz clic en "Agregar producto" o boton "+"
-3. Completa los datos:
-   - Nombre del producto
-   - SKU (codigo unico de identificacion)
-   - Precio de venta
-   - Categoria (ROPA o CALZADO)
-   - Stock inicial
-   - Stock minimo (opcional, para alertas)
-4. Haz clic en "Guardar"
-
-#### Editar Producto
-
-1. Busca el producto en la lista
-2. Haz clic en el producto o en el icono de editar
-3. Modifica los campos necesarios
-4. Guarda los cambios
-
-#### Eliminar Producto
-
-1. Busca el producto
-2. Haz clic en eliminar
-3. Confirma la accion
+Desde la interfaz, haz clic en **"Agregar producto"** y completa:
+- Nombre del producto
+- SKU (codigo unico)
+- Precio en soles (S/)
+- Categoria: ROPA o CALZADO
+- Activo/Inactivo
 
 ### Ventas
 
 Registro de transacciones comerciales.
 
-#### Nueva Venta
+**Estado actual:**
+- Backend: Implementado
+- Frontend: Implementado
 
-1. Navega a "Ventas"
-2. Haz clic en "Nueva venta" o "Registrar venta"
-3. Selecciona los productos y cantidades
-4. Opcional: Agrega un cliente
-5. El sistema descontara automaticamente del inventario
-6. Confirma la venta
+#### Acceso desde la interfaz
 
-#### Ver Historico
+1. Navega a **Ventas** en el menu lateral
+2. Veras el total de ventas del dia
+3. Haz clic en el boton flotante **"+"** para registrar una nueva venta
 
-1. Accede a "Ventas" para ver el historial
-2. Filtra por fecha o cliente
-3. Haz clic en una venta para ver el detalle
+#### Registrar una venta
+
+1. Selecciona el producto del inventario
+2. Ingresa la cantidad
+3. El precio se carga automaticamente (puede modificarse)
+4. Selecciona el cliente (opcional)
+5. Confirma el total y registra
+
+**Nota:** El sistema descuenta automaticamente el stock del inventario.
 
 ### Clientes
 
 Gestion de la base de clientes.
 
+**Estado actual:**
+- Backend: Implementado
+- Frontend: Implementado
+
+#### Acceso desde la interfaz
+
+1. Navega a **Clientes** en el menu lateral
+2. Puedes:
+   - Ver todos los clientes en lista o tabla
+   - Buscar por nombre, email o telefono
+   - Agregar nuevo cliente
+   - Editar cliente existente
+   - Eliminar cliente
+
 #### Agregar Cliente
 
-1. Navega a "Clientes"
-2. Haz clic en "Agregar cliente"
-3. Ingresa:
-   - Nombre completo
-   - Correo electronico (opcional)
-   - Telefono (opcional)
-
-#### Buscar Cliente
-
-Utiliza la barra de busqueda para encontrar clientes por nombre o correo.
+Desde la interfaz, haz clic en **"Agregar cliente"** y completa:
+- Nombre del cliente
+- Email (opcional)
+- Telefono (opcional)
 
 ### Inventario
 
 Control de stock y alertas.
 
-#### Ver Stock
+**Estado actual:**
+- Backend: Implementado
+- Frontend: Implementado
 
-1. Navega a "Inventario"
-2. Observa la lista de productos con sus cantidades
-3. Los productos con stock bajo se marcan con alerta
+#### Acceso desde la interfaz
 
-#### Ajustar Stock
+1. Navega a **Productos** en el menu lateral (el inventario esta integrado con productos)
+2. Veras:
+   - Lista de productos con su stock actual
+   - Alerta de productos con stock critico (menos de 3 unidades)
+   - Puedes buscar y filtrar por categoria
 
-1. Busca el producto
-2. Modifica la cantidad directamente o usa "Ajustar"
-3. Ingresa la nueva cantidad o el ajuste (positivo/negativo)
+#### Gestionar stock
 
-#### Configurar Alertas
-
-1. En el producto, establece un "Stock minimo"
-2. Cuando el stock caiga por debajo, aparecera una alerta
+- Para agregar inventario, edita el producto y configura el stock inicial
+- El stock se descuenta automaticamente al registrar una venta
+- Si un producto llega a menos de 3 unidades, aparecera una alerta en rojo
 
 ### Dashboard
 
 Panel de metricas y analisis.
 
-- Ventas del dia/semana/mes
-- Productos mas vendidos
-- Clientes frecuentes
-- Tendencias de demanda
+**Estado actual:** Implementado
+
+#### Caracteristicas
+
+- Resumen de ventas del dia
+- Total vendido en el dia
+- Acceso rapido a las demas secciones
 
 ---
 
 ## Referencia de API
+
+**Nota Importante:** Todas las rutas (excepto `/api/auth/register` y `/api/auth/login`) requieren el header de autenticación:
+
+```bash
+Authorization: Bearer <token>
+```
 
 ### Autenticacion
 
@@ -230,172 +261,6 @@ GET /api/stores/my-store
 Authorization: Bearer <token>
 ```
 
-### Productos
-
-#### Listar Productos
-
-```bash
-GET /api/products
-```
-
-#### Obtener Producto por ID
-
-```bash
-GET /api/products/:id
-```
-
-#### Crear Producto
-
-```bash
-POST /api/products
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "Camisa Manga Larga",
-  "sku": "CML-001",
-  "price": 49.99,
-  "category": "ROPA",
-  "initialStock": 100,
-  "minStock": 10
-}
-```
-
-#### Actualizar Producto
-
-```bash
-PUT /api/products/:id
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "Camisa Manga Corta",
-  "price": 39.99
-}
-```
-
-#### Eliminar Producto
-
-```bash
-DELETE /api/products/:id
-Authorization: Bearer <token>
-```
-
-### Ventas
-
-#### Crear Venta
-
-```bash
-POST /api/sales
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "userId": "uuid-usuario",
-  "customerId": "uuid-cliente (opcional)",
-  "items": [
-    {
-      "productId": "uuid-producto",
-      "productName": "Camisa",
-      "quantity": 2,
-      "unitPrice": 49.99
-    }
-  ]
-}
-```
-
-#### Listar Ventas
-
-```bash
-GET /api/sales
-Authorization: Bearer <token>
-```
-
-#### Ventas por Fecha
-
-```bash
-GET /api/sales/date-range?startDate=2026-01-01&endDate=2026-01-31
-Authorization: Bearer <token>
-```
-
-### Inventario
-
-#### Obtener Todo el Inventario
-
-```bash
-GET /api/inventory
-Authorization: Bearer <token>
-```
-
-#### Obtener Stock Bajo
-
-```bash
-GET /api/inventory/low-stock
-Authorization: Bearer <token>
-```
-
-#### Actualizar Stock
-
-```bash
-PUT /api/inventory/product/:productId/stock
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "quantity": 50
-}
-```
-
-O para ajustar (aumentar/disminuir):
-
-```json
-{
-  "adjustment": -5
-}
-```
-
-### Clientes
-
-#### Listar Clientes
-
-```bash
-GET /api/customers
-Authorization: Bearer <token>
-```
-
-#### Crear Cliente
-
-```bash
-POST /api/customers
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "Juan Perez",
-  "email": "juan@correo.com",
-  "phone": "+51 999 999 999"
-}
-```
-
-#### Actualizar Cliente
-
-```bash
-PUT /api/customers/:id
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "phone": "+51 888 888 888"
-}
-```
-
-#### Eliminar Cliente
-
-```bash
-DELETE /api/customers/:id
-Authorization: Bearer <token>
-```
-
 ---
 
 ## Preguntas Frecuentes
@@ -406,7 +271,7 @@ Actualmente, la recuperacion de contrasena debe realizarse contactando al admini
 
 ### ¿Que pasa si el stock llega a cero?
 
-El sistema permitira registrar ventas incluso con stock cero. Sin embargo, se recomienda mantener productos con stock disponible.
+El sistema permite registrar ventas siempre que haya stock disponible. Si intentas vender mas de lo que hay en inventario, el sistema te mostrara un mensaje de error indicando la cantidad disponible.
 
 ### ¿Puedo tener varias tiendas?
 
@@ -414,7 +279,7 @@ No, actualmente el sistema permite una tienda por usuario.
 
 ### ¿Como funcionan las alertas de stock bajo?
 
-Cuando configuras un "stock minimo" en un producto, el sistema te notificara cuando la cantidad disponible sea igual o inferior a ese valor.
+Cuando un producto tiene menos de 3 unidades en stock, aparecera una alerta en rojo en la seccion de productos indicando que hay stock critico.
 
 ### ¿Puedo exportar mis datos?
 

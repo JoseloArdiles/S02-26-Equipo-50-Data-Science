@@ -22,6 +22,41 @@ DATAMARK es una solución integral para pequeños comercios del sector textil y 
 - Prisma ORM
 - JWT + bcryptjs
 
+## Decisiones Tecnicas
+
+### Neon (PostgreSQL Serverless)
+Permite branching de base de datos para desarrollo sin afectar produccion. Escalabilidad automatica sin provisioning de servidores.
+
+### Railway
+Simplifica el despliegue de APIs Node.js con gestion automatica de variables de entorno, SSL y escalabilidad.
+
+### Vercel
+Optimizado para frontend React con CI/CD automatico, edge functions y optimizacion de rendimiento out-of-the-box.
+
+### Prisma ORM
+Type-safety completo con TypeScript, migraciones simples y abstraccion de consultas que evita SQL injection. Superior al raw SQL para mantenimiento a largo plazo.
+
+### JWT vs Session-based Auth
+Stateless, ideal para arquitecturas SPA. Sin almacenamiento server-side y compatible con multiples clientes (web, mobile).
+
+### Clean Architecture
+Separacion estricta de dominio y framework. Facilita testing, cambios de tecnologia y escalabilidad futura.
+
+## Seguridad
+
+- Hashing de contrasenas con bcrypt (cost factor 10)
+- Autenticacion via JWT en todas las rutas protegidas
+- Validacion de input con Zod
+- CORS configurado via ALLOWED_ORIGINS
+- Secrets almacenados en variables de entorno
+
+## Roadmap
+
+- OAuth con Facebook Login
+- Exportacion de datos a CSV
+- Sistema de recuperacion de contrasena
+- Soporte multi-tienda por usuario
+
 ## Estructura del Proyecto
 
 ```
@@ -91,6 +126,8 @@ npm run dev
 
 ## API Endpoints
 
+**Nota:** Todas las rutas (excepto `/api/auth/register` y `/api/auth/login`) requieren el header `Authorization: Bearer <token>`.
+
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | POST | /api/auth/register | Registrar usuario |
@@ -146,11 +183,11 @@ Consulta la [guia completa](./USER_GUIDE.md) para instrucciones detalladas sobre
 
 ## Equipo
 
-- Ezequiel Pacheco - Fullstack Developer & Scrum Master
-- Estrella Cruz Ulloa - Data & Frontend Developer
-- Nelson Alexander Borbor Diaz - Data & Fullstack Developer
-- Jose Ardilez Ugaz - Data Scientist & Frontend Developer
-- Daniel Lara - Data Scientist & Backend Developer
+- [Ezequiel Pacheco](https://github.com/EzePacheco) | [LinkedIn](https://www.linkedin.com/in/ezepacheco-dev/) - Fullstack Lead
+- [Estrella Cruz Ulloa](https://github.com/estrellacruzulloa) | [LinkedIn](https://www.linkedin.com/in/estrella-cruz-ulloa-102708275/) - Data & Frontend Developer
+- [Nelson Alexander Borbor Diaz](https://github.com/NelsonBorbor98) - Data & Fullstack Developer
+- [Jose Ardilez Ugaz](https://github.com/JoseloArdiles) | [LinkedIn](https://www.linkedin.com/in/joselo-ardiles-ugaz/) - Data Scientist & Frontend Developer
+- [Daniel Lara](https://github.com/Sts87) | [LinkedIn](https://www.linkedin.com/in/daniel-lara-mendoza/) - Data Scientist & Backend Developer
 
 ## Licencia
 
