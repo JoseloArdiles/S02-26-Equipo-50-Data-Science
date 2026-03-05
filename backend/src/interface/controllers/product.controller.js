@@ -46,6 +46,7 @@ class ProductController {
         data: product,
       });
     } catch (error) {
+
       next(error);
     }
   }
@@ -68,13 +69,8 @@ class ProductController {
         products = await this.productService.getAllProducts();
       }
 
-      return res.status(200).json({
-        success: true,
-        data: products,
-      });
-    } catch (error) {
-      next(error);
-    }
+      return res.status(200).json({ success: true, data: products });
+    } catch (error) { next(error); }
   }
 
   /**
@@ -86,15 +82,9 @@ class ProductController {
    */
   async getById(req, res, next) {
     try {
-      const { id } = req.params;
-      const product = await this.productService.getProductById(id);
-      return res.status(200).json({
-        success: true,
-        data: product,
-      });
-    } catch (error) {
-      next(error);
-    }
+      const product = await this.productService.getProductById(req.params.id);
+      return res.status(200).json({ success: true, data: product });
+    } catch (error) { next(error); }
   }
 
   /**
@@ -106,15 +96,9 @@ class ProductController {
    */
   async getByCategory(req, res, next) {
     try {
-      const { category } = req.params;
-      const products = await this.productService.getProductsByCategory(category);
-      return res.status(200).json({
-        success: true,
-        data: products,
-      });
-    } catch (error) {
-      next(error);
-    }
+      const products = await this.productService.getProductsByCategory(req.params.category);
+      return res.status(200).json({ success: true, data: products });
+    } catch (error) { next(error); }
   }
 
   /**
@@ -136,7 +120,8 @@ class ProductController {
       if (category) updateData.category = category;
       if (active !== undefined) updateData.active = active;
 
-      const product = await this.productService.updateProduct(id, updateData);
+      const product = await this.productService.updateProduct(id, req.body);
+
       return res.status(200).json({
         success: true,
         message: 'Producto actualizado exitosamente',
@@ -156,12 +141,9 @@ class ProductController {
    */
   async delete(req, res, next) {
     try {
-      const { id } = req.params;
-      await this.productService.deleteProduct(id);
+      await this.productService.deleteProduct(req.params.id);
       return res.status(204).send();
-    } catch (error) {
-      next(error);
-    }
+    } catch (error) { next(error); }
   }
 }
 
