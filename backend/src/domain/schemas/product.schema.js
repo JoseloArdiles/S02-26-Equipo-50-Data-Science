@@ -18,6 +18,7 @@ const ProductVariantSchema = z.object({
 });
 
 const ProductSchema = z.object({
+<<<<<<< HEAD
   id: z.string().uuid().optional(),
   name: z.string().min(1, 'El nombre es obligatorio'),
   description: z.string().optional(),
@@ -26,6 +27,16 @@ const ProductSchema = z.object({
   style: z.string().optional(),
   active: z.boolean().optional().default(true),
   variants: z.array(ProductVariantSchema).min(1, 'Debe tener al menos una variante'),
+=======
+  id: z.string().optional(),
+  name: z.string().min(1),
+  sku: z.string().min(1),
+  price: z.number().positive(),
+  category: z.enum(Object.values(ProductCategory)),
+  size: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
+  active: z.boolean().optional(),
+>>>>>>> vercel
 });
 
 export default ProductSchema;
